@@ -1,0 +1,16 @@
+{
+  "name": "autosftp",
+  "version": "0.1.0",
+  "description": "A command-line utility to watch files for changes and upload them via SFTP.",
+  "main": "lib/autosftp.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jmarquis/autosftp.git"
+  },
+  "author": "Jeremy Marquis <jeremy@jeremymarquis.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jmarquis/autosftp/issues"
+  },
+  "homepage": "https://github.com/jmarquis/autosftp"
+}
