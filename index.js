@@ -108,10 +108,10 @@ var _ = {
 	processQueue: function () {
 		return Q.Promise(function (resolve, reject) {
 
-			if (_.processing) {
-				resolve();
-			} else if (_.queue.length === 0) {
+			if (_.queue.length === 0) {
 				_.processing = false;
+				resolve();
+			} else if (_.processing) {
 				resolve();
 			} else {
 				_.processing = true;

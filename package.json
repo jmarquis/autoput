@@ -1,6 +1,6 @@
 {
   "name": "autoput",
-  "version": "0.1.0",
+  "version": "0.1.0-alpha.2",
   "description": "A command-line utility to watch files for changes and upload them via SFTP.",
   "main": "lib/autosftp.js",
   "repository": {
