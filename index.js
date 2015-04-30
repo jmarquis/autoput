@@ -33,22 +33,46 @@ var _ = {
 			process.exit(1);
 		}
 
+		_.sftp = null;
+		_.processing = false;
+		_.validated = false;
+		_.watcher = null;
+
 		_.connection = new SSHClient();
 
 		_.connection.on("error", function (error) {
-			console.log(error);
-			if (watcher) watcher.close();
+			console.log("\n" + error.toString());
+			_.reset();
+		});
+
+		_.connection.on("close", function (error) {
+			if (error) console.log("\nConnection terminated due to an error");
+			else console.log("\nConnection terminated");
+			_.reset();
 		});
 
 		_.connection.on("ready", function () {
 			_.openTransport()
-				.then(_.validateRemotePath)
-				.then(_.processQueue)
-				.then(_.watch);
+				.then(_.validateRemotePath, _.exit)
+				.then(_.processQueue, _.exit)
+				.then(_.watch, _.exit);
 		});
 
 		_.connect();
 
+	},
+
+	reset: function () {
+		console.log("Reinitializing...");
+		if (_.watcher) _.watcher.close();
+		if (_.connection) _.connection.end();
+		_.init();
+	},
+
+	exit: function () {
+		if (_.watcher) _.watcher.close();
+		if (_.connection) _.connection.end();
+		process.exit(1);
 	},
 
 	connect: function () {
@@ -57,7 +81,8 @@ var _ = {
 			host: config.host,
 			port: config.port,
 			username: config.auth.username,
-			password: config.auth.password
+			password: config.auth.password,
+			keepaliveInterval: config.keepalive || 0
 		});
 	},
 
@@ -65,7 +90,7 @@ var _ = {
 		return Q.Promise(function (resolve, reject) {
 			_.connection.sftp(function (error, sftp) {
 				if (error) {
-					console.log("SSH ERROR: " + error);
+					console.log("SSH ERROR: ", error);
 					reject();
 				} else {
 					_.sftp = sftp;
@@ -129,7 +154,7 @@ var _ = {
 	put: function (absolutePath) {
 		return Q.Promise(function (resolve, reject) {
 			var relativePath = path.relative(process.cwd(), absolutePath);
-			process.stdout.write("Uploading " + absolutePath + " ... ");
+			process.stdout.write("Uploading " + relativePath + " ... ");
 			_.sftp.fastPut(absolutePath, path.join(config.path, relativePath), function (error) {
 				if (error) {
 					console.log("\n" + error);
@@ -159,7 +184,6 @@ var _ = {
 			}
 
 			this.on("all", function (event, absolutePath) {
-				console.log(event + ": " + path.relative(process.cwd(), absolutePath));
 				if (event === "changed" || event === "added") {
 					_.queue.push(absolutePath);
 					_.processQueue();
