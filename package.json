@@ -1,18 +1,17 @@
 {
   "name": "autoput",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A command-line utility to watch files for changes and upload them via SFTP.",
-  "main": "lib/autosftp.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jmarquis/autosftp.git"
+    "url": "https://github.com/jmarquis/autoput.git"
   },
   "author": "Jeremy Marquis <jeremy@jeremymarquis.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/jmarquis/autosftp/issues"
+    "url": "https://github.com/jmarquis/autoput/issues"
   },
-  "homepage": "https://github.com/jmarquis/autosftp",
+  "homepage": "https://github.com/jmarquis/autoput",
   "bin": {
     "autoput": "index.js"
   },
